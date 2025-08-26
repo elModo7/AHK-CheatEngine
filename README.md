@@ -15,3 +15,5 @@ It is very basic but covers a few of the most common ram searches.
 > AHK-L v1 also **lacks multithread support**, so if you want a lightning-fast alternative consider using a compiled language solution.
 
 ![ToolInfo](https://github.com/elModo7/AHK-CheatEngine/blob/main/res/tool_info.png?raw=true)
+
+This is a stripped down version of one of my [EmuHook](https://github.com/elModo7/EmuHook) demos.
