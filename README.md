@@ -7,7 +7,7 @@ It is very basic but covers a few of the most common ram searches.
 
 
 > [!CAUTION]
-> In the case that you use this for a game, use it for offline games, I am not responsible for any misuse of this tool. It is also very likely that it may be flagged by anticheats if you target a game process.
+> In the case that you use this for a game, **use it for offline games**, *I am not responsible for any misuse of this tool.* It is also very likely that it may be flagged by anticheats if you target a game process.
 
 
 > [!NOTE] 
