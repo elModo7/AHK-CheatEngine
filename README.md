@@ -1,6 +1,9 @@
 # RAM Search & Edit Tool
 
+<img width="1040" height="723" alt="AutoHotkeyU64_EvGfJqJquO" src="https://github.com/user-attachments/assets/1fa21553-7892-4ce2-956e-9dd78a2f8e31" />
+
 ![Preview](https://github.com/elModo7/AHK-CheatEngine/blob/main/res/preview.gif?raw=true)
+
 
 This is a basic example in AutoHotkey of a tool resembling [CheatEngine](https://github.com/cheat-engine/cheat-engine)'s main read/write memory functions.
 It is very basic but covers a few of the most common ram searches.
