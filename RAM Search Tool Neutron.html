@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8">
+  <title>RAM Search Tool Neutron</title>
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #111820;
+      color: #e8edf2;
+      overflow: hidden;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      height: 34px;
+      display: flex;
+      background: #17212b;
+      border-bottom: 1px solid #263644;
+      color: #e8edf2;
+      font-size: 9pt;
+      user-select: none;
+    }
+
+    .title-bar {
+      flex-grow: 1;
+      padding: 8px 12px;
+      letter-spacing: 0;
+    }
+
+    .title-mark {
+      color: #56d8b9;
+      font-weight: 700;
+      margin-right: 8px;
+    }
+
+    .title-btn {
+      width: 42px;
+      padding-top: 7px;
+      text-align: center;
+      cursor: pointer;
+      font-family: Webdings;
+      font-size: 11pt;
+    }
+
+    body .title-btn-restore {
+      display: none;
+    }
+
+    body.neutron-maximized .title-btn-restore {
+      display: block;
+    }
+
+    body.neutron-maximized .title-btn-maximize {
+      display: none;
+    }
+
+    .title-btn:hover {
+      background: #293845;
+    }
+
+    .title-btn-close:hover {
+      background: #c84949;
+    }
+
+    .main {
+      flex: 1;
+      min-height: 0;
+      background: #111820;
+    }
+
+    .app {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid #263644;
+      background: #151e27;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 650;
+    }
+
+    .subhead {
+      margin-top: 2px;
+      color: #9fb0bf;
+      font-size: 12px;
+    }
+
+    .target {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #afbcc8;
+    }
+
+    .badge {
+      display: inline-block;
+      min-width: 72px;
+      padding: 5px 9px;
+      border: 1px solid #385167;
+      border-radius: 6px;
+      background: #101820;
+      color: #56d8b9;
+      text-align: center;
+    }
+
+    .content {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+    }
+
+    .side {
+      width: 318px;
+      min-width: 318px;
+      padding: 14px;
+      overflow: auto;
+      border-right: 1px solid #263644;
+      background: #151e27;
+      box-sizing: border-box;
+    }
+
+    .workspace {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      background: #111820;
+    }
+
+    .section {
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      margin: 0 0 8px 0;
+      color: #e8edf2;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #a9b7c4;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    input, select {
+      width: 100%;
+      height: 34px;
+      padding: 6px 9px;
+      border: 1px solid #34495c;
+      border-radius: 6px;
+      background: #0f161d;
+      color: #eef4f8;
+      box-sizing: border-box;
+      font-size: 13px;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: #56d8b9;
+    }
+
+    :-ms-input-placeholder {
+      color: #657787;
+    }
+
+    .field {
+      margin-bottom: 10px;
+    }
+
+    .split {
+      display: flex;
+      gap: 8px;
+    }
+
+    .split .field {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .process-field {
+      display: flex;
+      gap: 8px;
+    }
+
+    .process-field input {
+      flex: 1;
+    }
+
+    button {
+      height: 34px;
+      border: 1px solid #385167;
+      border-radius: 6px;
+      background: #203041;
+      color: #eef4f8;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 650;
+      padding: 0 12px;
+      white-space: nowrap;
+    }
+
+    button:hover {
+      background: #2b4054;
+    }
+
+    .primary {
+      border-color: #40b99d;
+      background: #16866f;
+    }
+
+    .primary:hover {
+      background: #1a997f;
+    }
+
+    .danger {
+      border-color: #8d4747;
+      background: #67333a;
+    }
+
+    .danger:hover {
+      background: #7a3d45;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .button-row button {
+      flex: 1;
+    }
+
+    .checkline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #b8c5d0;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .checkline input {
+      width: 16px;
+      height: 16px;
+      padding: 0;
+    }
+
+    .metrics {
+      display: flex;
+      gap: 8px;
+      padding: 12px 14px;
+      border-bottom: 1px solid #263644;
+      background: #121a22;
+    }
+
+    .metric {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid #263644;
+      border-radius: 6px;
+      background: #151e27;
+      padding: 9px 10px;
+      box-sizing: border-box;
+    }
+
+    .metric-label {
+      color: #8798a7;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .metric-value {
+      margin-top: 3px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #eef4f8;
+    }
+
+    .result-tools {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-bottom: 1px solid #263644;
+      color: #aab8c4;
+      background: #101820;
+      font-size: 12px;
+    }
+
+    .progress {
+      position: relative;
+      width: 220px;
+      height: 10px;
+      border-radius: 5px;
+      overflow: hidden;
+      background: #263644;
+      margin-right: 10px;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: #56d8b9;
+    }
+
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+    }
+
+    .table-wrap {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 13px;
+    }
+
+    thead {
+      background: #182431;
+      color: #b9c7d2;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    th, td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #223140;
+      text-align: left;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      cursor: default;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #131d26;
+    }
+
+    tbody tr:hover {
+      background: #203041;
+    }
+
+    .empty {
+      color: #8194a4;
+      text-align: center;
+      padding: 40px 12px;
+    }
+
+    .statusbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 34px;
+      padding: 0 14px;
+      border-top: 1px solid #263644;
+      background: #151e27;
+      color: #aab8c4;
+      font-size: 12px;
+      box-sizing: border-box;
+    }
+
+    .status {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .status.ok {
+      color: #56d8b9;
+    }
+
+    .status.warn {
+      color: #f0bf68;
+    }
+
+    .status.busy {
+      color: #75a7ff;
+    }
+
+    .panel {
+      display: none;
+      position: absolute;
+      left: 0;
+      top: 34px;
+      right: 0;
+      bottom: 0;
+      background: rgba(8, 12, 16, 0.62);
+      z-index: 10;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .panel-visible {
+      display: flex;
+    }
+
+    .dialog {
+      width: 520px;
+      max-width: 90%;
+      border: 1px solid #34495c;
+      border-radius: 8px;
+      background: #151e27;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+    }
+
+    .dialog.small {
+      width: 360px;
+    }
+
+    .dialog-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border-bottom: 1px solid #263644;
+    }
+
+    .dialog-head h2 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .dialog-body {
+      padding: 14px;
+    }
+
+    .process-table {
+      max-height: 320px;
+      overflow: auto;
+      border: 1px solid #263644;
+      border-radius: 6px;
+    }
+
+    .close {
+      width: 34px;
+      padding: 0;
+      font-family: Webdings;
+    }
+
+    .hint {
+      color: #8194a4;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .app.busy .primary {
+      border-color: #426984;
+      background: #22425a;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="title-bar" onmousedown="neutron.DragTitleBar()"><span class="title-mark">Trident</span> RAM Search Tool Neutron</span>
+    <span class="title-btn" onclick="neutron.Minimize()">0</span>
+    <span class="title-btn title-btn-maximize" onclick="neutron.Maximize()">1</span>
+    <span class="title-btn title-btn-restore" onclick="neutron.Maximize()">2</span>
+    <span class="title-btn title-btn-close" onclick="neutron.Close()">r</span>
+  </header>
+
+  <div id="app" class="app">
+    <div class="toolbar">
+      <div>
+        <h1>RAM Search Tool</h1>
+        <div class="subhead">Neutron interface for process memory search and editing</div>
+      </div>
+      <div class="target">
+        Target
+        <span id="targetBadge" class="badge">Not attached</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <aside class="side">
+        <form id="searchForm" onsubmit="return false">
+          <div class="section">
+            <div class="section-title">Target</div>
+            <label for="processName">Process</label>
+            <div class="process-field">
+              <input id="processName" name="processName" type="text" placeholder="mGBA.exe" disabled>
+              <button type="button" onclick="ahk.ShowProcessPanel(event)">Find</button>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Scan</div>
+            <div class="field">
+              <label for="searchValue">Value</label>
+              <input id="searchValue" name="searchValue" type="text" placeholder="Decimal value">
+            </div>
+            <div class="split">
+              <div class="field">
+                <label for="searchBytes">Bytes</label>
+                <select id="searchBytes" name="searchBytes">
+                  <option selected>1</option>
+                  <option>2</option>
+                  <option>4</option>
+                  <option>8</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="searchSize">Size KB</label>
+                <input id="searchSize" name="searchSize" type="text" value="8">
+              </div>
+            </div>
+            <div class="split">
+              <div class="field">
+                <label for="searchType">Type</label>
+                <select id="searchType" name="searchType">
+                  <option selected>Exact</option>
+                  <option>Bigger</option>
+                  <option>Smaller</option>
+                  <option>Changed</option>
+                  <option>Unchanged</option>
+                  <option>Unknown</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="searchOffset">Offset</label>
+                <input id="searchOffset" name="searchOffset" type="text" placeholder="0xC000">
+              </div>
+            </div>
+            <div class="field">
+              <label for="displayLimit">Rows to render</label>
+              <input id="displayLimit" name="displayLimit" type="text" value="5000">
+              <div class="hint">Use 0 to render every result.</div>
+            </div>
+            <label class="checkline" for="comparePrevious">
+              <input id="comparePrevious" name="comparePrevious" type="checkbox" value="1">
+              Compare Bigger/Smaller against previous value
+            </label>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Actions</div>
+            <div class="button-row">
+              <button class="primary" type="button" onclick="ahk.FirstSearch(event)">First Search</button>
+              <button class="primary" type="button" onclick="ahk.NextSearch(event)">Next Search</button>
+            </div>
+            <div class="button-row">
+              <button type="button" onclick="ahk.RefreshSearch(event)">Refresh</button>
+              <button class="danger" type="button" onclick="ahk.RequestCancel(event)">Cancel</button>
+            </div>
+            <button type="button" onclick="ahk.ShowAbout(event)">Info</button>
+          </div>
+        </form>
+      </aside>
+
+      <main class="workspace">
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Found</div>
+            <div id="metricFound" class="metric-value">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Read</div>
+            <div id="metricRead" class="metric-value">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Shown</div>
+            <div id="metricShown" class="metric-value">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Time</div>
+            <div id="metricTime" class="metric-value">0s</div>
+          </div>
+        </div>
+
+        <div class="result-tools">
+          <div class="progress-wrap">
+            <div class="progress"><div id="progressBar" class="progress-bar"></div></div>
+            <span id="progressLabel">0%</span>
+          </div>
+          <div>Found <span id="foundInline">0</span> | Shown <span id="shownInline">0</span></div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Address</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody id="resultsBody">
+              <tr><td colspan="2" class="empty">Attach a process and run a search.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="statusbar">
+          <div id="statusText" class="status idle">Ready.</div>
+          <div>Double-click a result to edit memory</div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="processPanel" class="panel">
+    <div class="dialog">
+      <div class="dialog-head">
+        <h2>Find Process</h2>
+        <button class="close" type="button" onclick="ahk.CloseProcessPanel(event)">r</button>
+      </div>
+      <div class="dialog-body">
+        <form onsubmit="ahk.SearchProcesses(event)">
+          <div class="process-field">
+            <input id="processSearch" name="processSearch" type="text" placeholder="Process name">
+            <button class="primary" type="submit">Search</button>
+          </div>
+        </form>
+        <div class="hint" id="processCount">Search for a process name.</div>
+        <div class="process-table">
+          <table>
+            <thead>
+              <tr><th style="width: 90px;">PID</th><th>Name</th></tr>
+            </thead>
+            <tbody id="processRows">
+              <tr><td colspan="2" class="empty">No process search yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="editPanel" class="panel">
+    <div class="dialog small">
+      <div class="dialog-head">
+        <h2>Set Value</h2>
+        <button class="close" type="button" onclick="ahk.CloseEditPanel(event)">r</button>
+      </div>
+      <div class="dialog-body">
+        <form onsubmit="ahk.SetRamValue(event)">
+          <div class="field">
+            <label>Address</label>
+            <div id="editAddress" class="badge" style="width: 100%; box-sizing: border-box;"></div>
+          </div>
+          <div class="field">
+            <label>Size</label>
+            <div id="editSize" class="badge" style="width: 100%; box-sizing: border-box;"></div>
+          </div>
+          <div class="field">
+            <label for="editValue">Value</label>
+            <input id="editValue" name="editValue" type="text">
+          </div>
+          <div class="button-row">
+            <button type="button" onclick="ahk.CloseEditPanel(event)">Cancel</button>
+            <button class="primary" type="submit">Set Value</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.selectedPid = "";
+    window.selectedProcess = "";
+    window.selectedAddress = "";
+    window.selectedValue = "";
+
+    function chooseProcess(row, evt) {
+      window.selectedPid = row.getAttribute("data-pid");
+      window.selectedProcess = row.getAttribute("data-name");
+      ahk.SelectProcess(evt || window.event);
+    }
+
+    function editAddress(row, evt) {
+      window.selectedAddress = row.getAttribute("data-address");
+      window.selectedValue = row.getAttribute("data-value");
+      ahk.EditAddress(evt || window.event);
+    }
+  </script>
+</body>
+</html>
